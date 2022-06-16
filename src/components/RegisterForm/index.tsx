@@ -3,10 +3,10 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../hooks/useNotification";
 import { NotificationKeys } from "../../services/localKey";
-import { useNavigate } from "react-router-dom";
-import { RegisterFormProps } from "../../types/RegisterFormProps";
+import { FormProps } from "../../types/FormProps";
 
 const schema = yup.object().shape({
   email: yup.string().required("Incorrect entry").email(),
@@ -18,16 +18,16 @@ export const RegisterForm = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormProps>({
+  } = useForm<FormProps>({
     resolver: yupResolver(schema),
   });
   const navigate = useNavigate();
-
-  const { onRegister, error } = useAuth();
   const { addNotification } = useNotification();
 
-  const registration = async (data: RegisterFormProps) => {
-    onRegister(data.email, data.password);
+  const { onRegister } = useAuth();
+
+  const registration = async (data: FormProps) => {
+    const error = onRegister(data.email, data.password);
     if (error) {
       addNotification(error, NotificationKeys.ERROR);
     } else {

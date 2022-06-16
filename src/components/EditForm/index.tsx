@@ -2,11 +2,8 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Button, TextField, Typography } from "@mui/material";
-import { useAuth } from "../../hooks/useAuth";
-
-import { useNavigate } from "react-router-dom";
-import { useNotification } from "../../hooks/useNotification";
-import { NotificationKeys } from "../../services/localKey";
+import { useDashboard } from "../../hooks/useDashboard";
+import { modalStyle } from "../../style/formStyle";
 import { FormProps } from "../../types/FormProps";
 
 const schema = yup.object().shape({
@@ -14,7 +11,17 @@ const schema = yup.object().shape({
   password: yup.string().required("Incorrect entry"),
 });
 
-export const LoginForm = () => {
+export const EditForm = ({
+  handleCloseEdit,
+  id,
+  email,
+  password,
+}: {
+  handleCloseEdit: () => void;
+  id: number;
+  email: string;
+  password: string;
+}) => {
   const {
     register,
     handleSubmit,
@@ -22,37 +29,32 @@ export const LoginForm = () => {
   } = useForm<FormProps>({
     resolver: yupResolver(schema),
   });
-  const navigate = useNavigate();
 
-  const { onLogin } = useAuth();
-  const { addNotification } = useNotification();
+  const { editAccount } = useDashboard();
 
-  const login = async (data: FormProps) => {
-    const error = onLogin(data.email, data.password);
-    if (error) {
-      addNotification(error, NotificationKeys.ERROR);
-    } else {
-      navigate("/dashboard");
-    }
+  const edit = async (data: FormProps) => {
+    editAccount(id, data.email, data.password);
+    handleCloseEdit();
   };
 
   return (
-    <Box>
+    <Box sx={modalStyle}>
       <form
         onSubmit={handleSubmit((data) => {
-          login(data);
+          edit(data);
         })}
       >
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", margin: "15px 0 0 0" }}>
           <Typography id="modal-modal-title" variant="h6" component="h1">
-            Email address:
+            Email:
           </Typography>
           <TextField
             id="outlined-password-input"
-            label="Email address"
-            sx={{ width: "65%", margin: "0 0 0 20px" }}
+            label="Email"
+            sx={{ width: "65%", margin: "-10px 0 0 63px" }}
             error={!!errors.email}
             {...register("email", { required: true })}
+            defaultValue={email}
             InputLabelProps={{
               shrink: true,
             }}
@@ -60,7 +62,7 @@ export const LoginForm = () => {
           />
         </Box>
 
-        <Box sx={{ display: "flex", margin: "10px 0 0 0" }}>
+        <Box sx={{ display: "flex", margin: "35px 0 0 0" }}>
           <Typography id="modal-modal-title" variant="h6" component="h1">
             Password:
           </Typography>
@@ -69,9 +71,10 @@ export const LoginForm = () => {
             label="Password"
             autoComplete="current-password"
             type="password"
-            sx={{ width: "65%", margin: "0 0 0 45px" }}
+            sx={{ width: "65%", margin: "-10px 0 0 25px" }}
             error={!!errors.password}
             {...register("password", { required: true })}
+            defaultValue={password}
             InputLabelProps={{
               shrink: true,
             }}
@@ -79,8 +82,12 @@ export const LoginForm = () => {
           />
         </Box>
 
-        <Button variant="contained" type="submit">
-          Log In
+        <Button
+          variant="contained"
+          type="submit"
+          sx={{ margin: " 15px 0 0 79%" }}
+        >
+          Edit
         </Button>
       </form>
     </Box>

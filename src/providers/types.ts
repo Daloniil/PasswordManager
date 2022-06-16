@@ -1,9 +1,8 @@
 export interface AuthContextType {
-  error: string;
   users: UserType[];
   user: UserType;
-  onRegister: (email: string, password: string) => void;
-  onLogin: (email: string, password: string) => void;
+  onRegister: (email: string, password: string) => string;
+  onLogin: (email: string, password: string) => string;
   onLogout: () => void;
 }
 
@@ -19,3 +18,25 @@ export type NotificationContextType = {
   addNotification: (message: string, status: string) => void;
   removeNotification: () => void;
 };
+
+export interface DashboardContextType {
+  dashboards: DashboardType[];
+  dashboard: DashboardType;
+  addUser: (id: number) => void;
+  loginAccount: (id: number) => void;
+  addAccount: (email: string, password: string) => void;
+  editAccount: (id: number, email: string, password: string) => void;
+  deleteAccount: (id: number) => void;
+}
+
+export interface DashboardType {
+  id: number | null;
+  userId: number | null;
+  account: AccountType[];
+}
+
+export interface AccountType {
+  id: number;
+  email: string;
+  password: string;
+}

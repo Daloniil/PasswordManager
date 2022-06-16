@@ -1,15 +1,15 @@
 import React, { ReactNode, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { ContextKey } from "../services/localKey";
 import { LocalStorageService } from "../services/localStorageService";
 import { AuthContextType, UserType } from "./types";
 
 export const AuthContext = React.createContext<AuthContextType>({
-  error: "",
   users: [],
   user: { id: null, email: "", password: "" },
-  onRegister: () => {},
-  onLogin: () => {},
+  onRegister: () => "",
+  onLogin: () => "",
   onLogout: () => {},
 });
 
@@ -27,28 +27,23 @@ const appGetUser = (key: string): UserType => {
   );
 };
 
-const appGetError = (key: string): string => {
-  return LocalStorageService.getItem<string>(key) ?? "";
-};
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   const [users, setUsers] = useState(appGetUsers(ContextKey.USERS));
   const [user, setUser] = useState(appGetUser(ContextKey.USER));
-  const [error, setError] = useState(appGetError(ContextKey.ERROR));
 
   const handleRegister = (email: string, password: string) => {
-    LocalStorageService.setUsers(email, password);
+    const result = LocalStorageService.setUsers(email, password);
     setUsers(appGetUsers(ContextKey.USERS));
     setUser(appGetUser(ContextKey.USER));
-    setError(appGetError(ContextKey.ERROR));
+    return result;
   };
 
   const handleLogin = (email: string, password: string) => {
-    LocalStorageService.setUser(email, password);
+    const result = LocalStorageService.setUser(email, password);
     setUser(appGetUser(ContextKey.USER));
-    setError(appGetError(ContextKey.ERROR));
+    return result;
   };
 
   const handleLogout = () => {
@@ -58,7 +53,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const value = {
-    error,
     users,
     user,
     onRegister: useCallback(

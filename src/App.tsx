@@ -4,14 +4,17 @@ import { NotificationProvider } from "./providers/NotificationProvider";
 import { AppRoutes } from "./routers";
 import { theme } from "./theme";
 import Notification from "./components/Notification";
+import { DashboardProvider } from "./providers/DashboardProvider";
 
 export const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <NotificationProvider>
         <AuthProvider>
-          <AppRoutes />
-          <Notification />
+          <DashboardProvider>
+            <AppRoutes />
+            <Notification />
+          </DashboardProvider>
         </AuthProvider>
       </NotificationProvider>
     </ThemeProvider>
