@@ -106,7 +106,12 @@ export class LocalStorageService {
     storage.setItem(ContextKey.DASHBOARD, JSON.stringify(dashboard[0]));
   }
 
-  public static addAccount(email: string, password: string, session = false) {
+  public static addAccount(
+    name: string,
+    email: string,
+    password: string,
+    session = false
+  ) {
     const storage = session ? sessionStorage : localStorage;
 
     const dashboards =
@@ -127,6 +132,7 @@ export class LocalStorageService {
 
     const newDashboard = {
       id: accountId,
+      name: name,
       email: email,
       password: password,
     };
@@ -139,6 +145,7 @@ export class LocalStorageService {
 
   public static editAccount(
     accountId: number,
+    name: string,
     email: string,
     password: string,
     session = false
@@ -156,10 +163,13 @@ export class LocalStorageService {
       account: [],
     };
 
-    dashboard.account[accountId - 1].email = email;
-    dashboard.account[accountId - 1].password = password;
+    const id = dashboard.account.map((el) => el.id).indexOf(accountId);
 
-    dashboards[Number(dashboard.id) - 1] = dashboard;
+    dashboard.account[id].name = name;
+    dashboard.account[id].email = email;
+    dashboard.account[id].password = password;
+
+    dashboards[id] = dashboard;
     storage.setItem(ContextKey.DASHBOARD, JSON.stringify(dashboard));
     storage.setItem(ContextKey.DASHBOARDS, JSON.stringify(dashboards));
   }
@@ -178,8 +188,10 @@ export class LocalStorageService {
       account: [],
     };
 
-    dashboard.account.splice(accountId - 1, 1);
-    dashboards[Number(dashboard.id) - 1] = dashboard;
+    const id = dashboard.account.map((el) => el.id).indexOf(accountId);
+
+    dashboard.account.splice(id, 1);
+    dashboards[id] = dashboard;
 
     storage.setItem(ContextKey.DASHBOARD, JSON.stringify(dashboard));
     storage.setItem(ContextKey.DASHBOARDS, JSON.stringify(dashboards));

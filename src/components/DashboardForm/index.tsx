@@ -4,47 +4,74 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useDashboard } from "../../hooks/useDashboard";
 import { modalStyle } from "../../style/formStyle";
-import { FormProps } from "../../types/FormProps";
+import { DashboardProps } from "../../types/DashboarbForm";
+import { buttonForm, textFieldContainer } from "../../style/dashboardStyle";
 
 const schema = yup.object().shape({
+  name: yup.string().required("Incorrect entry"),
   email: yup.string().required("Incorrect entry").email(),
   password: yup.string().required("Incorrect entry"),
 });
 
-export const EditForm = ({
-  handleCloseEdit,
+export const DashboardForm = ({
+  handleClose,
   id,
+  name,
   email,
   password,
 }: {
-  handleCloseEdit: () => void;
-  id: number;
-  email: string;
-  password: string;
+  handleClose: () => void;
+  id?: number;
+  name?: string;
+  email?: string;
+  password?: string;
 }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormProps>({
+  } = useForm<DashboardProps>({
     resolver: yupResolver(schema),
   });
 
-  const { editAccount } = useDashboard();
+  const { addAccount, editAccount } = useDashboard();
 
-  const edit = async (data: FormProps) => {
-    editAccount(id, data.email, data.password);
-    handleCloseEdit();
+  const dashboard = async (data: DashboardProps) => {
+    if (id) {
+      editAccount(id, data.name, data.email, data.password);
+    } else {
+      addAccount(data.name, data.email, data.password);
+    }
+    handleClose();
   };
 
   return (
     <Box sx={modalStyle}>
       <form
         onSubmit={handleSubmit((data) => {
-          edit(data);
+          dashboard(data);
         })}
       >
-        <Box sx={{ display: "flex", margin: "15px 0 0 0" }}>
+        <Box sx={textFieldContainer}>
+          <Typography id="modal-modal-title" variant="h6" component="h1">
+            Name:
+          </Typography>
+          <TextField
+            id="outlined-password-input"
+            label="Name"
+            autoComplete="current-password"
+            sx={{ width: "65%", margin: "-10px 0 0 58px" }}
+            error={!!errors.name}
+            defaultValue={name ? name : ""}
+            {...register("name", { required: true })}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            helperText={errors.name?.message}
+          />
+        </Box>
+
+        <Box sx={textFieldContainer}>
           <Typography id="modal-modal-title" variant="h6" component="h1">
             Email:
           </Typography>
@@ -53,8 +80,8 @@ export const EditForm = ({
             label="Email"
             sx={{ width: "65%", margin: "-10px 0 0 63px" }}
             error={!!errors.email}
+            defaultValue={email ? email : ""}
             {...register("email", { required: true })}
-            defaultValue={email}
             InputLabelProps={{
               shrink: true,
             }}
@@ -62,7 +89,7 @@ export const EditForm = ({
           />
         </Box>
 
-        <Box sx={{ display: "flex", margin: "35px 0 0 0" }}>
+        <Box sx={textFieldContainer}>
           <Typography id="modal-modal-title" variant="h6" component="h1">
             Password:
           </Typography>
@@ -73,8 +100,8 @@ export const EditForm = ({
             type="password"
             sx={{ width: "65%", margin: "-10px 0 0 25px" }}
             error={!!errors.password}
+            defaultValue={password ? password : ""}
             {...register("password", { required: true })}
-            defaultValue={password}
             InputLabelProps={{
               shrink: true,
             }}
@@ -82,12 +109,8 @@ export const EditForm = ({
           />
         </Box>
 
-        <Button
-          variant="contained"
-          type="submit"
-          sx={{ margin: " 15px 0 0 79%" }}
-        >
-          Edit
+        <Button variant="contained" type="submit" sx={buttonForm}>
+          {id ? "Edit" : "Add"}
         </Button>
       </form>
     </Box>

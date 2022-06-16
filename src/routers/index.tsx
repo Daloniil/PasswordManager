@@ -1,10 +1,9 @@
 import { Navigate, RouteObject, useRoutes } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { DashboardPage } from "../pages/Dashboard";
-import { LoginPage } from "../pages/Login";
-import { MainPage } from "../pages/Main";
-import { ErrorPage } from "../pages/NotFound";
-import { RegisterPage } from "../pages/Register";
+import { AuthPage } from "../pages/auth";
+import { DashboardPage } from "../pages/dashboard";
+import { MainPage } from "../pages/main";
+import { ErrorPage } from "../pages/error";
 
 const routes = (isAuth: number | null): RouteObject[] => [
   {
@@ -17,11 +16,11 @@ const routes = (isAuth: number | null): RouteObject[] => [
   },
   {
     path: "/login",
-    element: isAuth ? <Navigate to="/dashboard" /> : <LoginPage />,
+    element: isAuth ? <Navigate to="/dashboard" /> : <AuthPage />,
   },
   {
     path: "/register",
-    element: isAuth ? <Navigate to="/dashboard" /> : <RegisterPage />,
+    element: isAuth ? <Navigate to="/dashboard" /> : <AuthPage />,
   },
   {
     path: "/dashboard",

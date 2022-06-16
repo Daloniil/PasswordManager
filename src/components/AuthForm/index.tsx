@@ -3,32 +3,43 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
-
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../hooks/useNotification";
 import { NotificationKeys } from "../../services/localKey";
-import { FormProps } from "../../types/FormProps";
+import { AuthProps } from "../../types/AuthProps";
+import {
+  buttonAuth,
+  containerAuth,
+  emailAuth,
+  emailFieldAuth,
+  passwordAuthContainer,
+  passwordFieldAuth,
+} from "../../style/authStyle";
 
 const schema = yup.object().shape({
   email: yup.string().required("Incorrect entry").email(),
   password: yup.string().required("Incorrect entry"),
 });
 
-export const LoginForm = () => {
+export const AuthForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormProps>({
+  } = useForm<AuthProps>({
     resolver: yupResolver(schema),
   });
   const navigate = useNavigate();
-
-  const { onLogin } = useAuth();
   const { addNotification } = useNotification();
+  const link = window.location.pathname;
 
-  const login = async (data: FormProps) => {
-    const error = onLogin(data.email, data.password);
+  const { onRegister, onLogin } = useAuth();
+
+  const auth = async (data: AuthProps) => {
+    const error =
+      link === "/register"
+        ? onRegister(data.email, data.password)
+        : onLogin(data.email, data.password);
     if (error) {
       addNotification(error, NotificationKeys.ERROR);
     } else {
@@ -37,20 +48,25 @@ export const LoginForm = () => {
   };
 
   return (
-    <Box>
+    <Box sx={containerAuth}>
       <form
         onSubmit={handleSubmit((data) => {
-          login(data);
+          auth(data);
         })}
       >
         <Box sx={{ display: "flex" }}>
-          <Typography id="modal-modal-title" variant="h6" component="h1">
-            Email address:
+          <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h1"
+            sx={emailAuth}
+          >
+            Email Address:
           </Typography>
           <TextField
             id="outlined-password-input"
             label="Email address"
-            sx={{ width: "65%", margin: "0 0 0 20px" }}
+            sx={emailFieldAuth}
             error={!!errors.email}
             {...register("email", { required: true })}
             InputLabelProps={{
@@ -60,8 +76,13 @@ export const LoginForm = () => {
           />
         </Box>
 
-        <Box sx={{ display: "flex", margin: "10px 0 0 0" }}>
-          <Typography id="modal-modal-title" variant="h6" component="h1">
+        <Box sx={passwordAuthContainer}>
+          <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h1"
+            sx={{ margin: "10px 0 0 0" }}
+          >
             Password:
           </Typography>
           <TextField
@@ -69,7 +90,7 @@ export const LoginForm = () => {
             label="Password"
             autoComplete="current-password"
             type="password"
-            sx={{ width: "65%", margin: "0 0 0 45px" }}
+            sx={passwordFieldAuth}
             error={!!errors.password}
             {...register("password", { required: true })}
             InputLabelProps={{
@@ -79,8 +100,8 @@ export const LoginForm = () => {
           />
         </Box>
 
-        <Button variant="contained" type="submit">
-          Log In
+        <Button variant="contained" type="submit" sx={buttonAuth}>
+          {link === "/register" ? "Register" : "Sign in"}
         </Button>
       </form>
     </Box>

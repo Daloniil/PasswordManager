@@ -51,14 +51,19 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
     setDashboard(appGetDashboard(ContextKey.DASHBOARD));
   };
 
-  const addAccount = (email: string, password: string) => {
-    LocalStorageService.addAccount(email, password);
+  const addAccount = (name: string, email: string, password: string) => {
+    LocalStorageService.addAccount(name, email, password);
     setDashboards(appGetDashboards(ContextKey.DASHBOARDS));
     setDashboard(appGetDashboard(ContextKey.DASHBOARD));
   };
 
-  const editAccount = (id: number, email: string, password: string) => {
-    LocalStorageService.editAccount(id, email, password);
+  const editAccount = (
+    id: number,
+    name: string,
+    email: string,
+    password: string
+  ) => {
+    LocalStorageService.editAccount(id, name, email, password);
     setDashboards(appGetDashboards(ContextKey.DASHBOARDS));
     setDashboard(appGetDashboard(ContextKey.DASHBOARD));
   };
@@ -76,12 +81,13 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
     addUser: useCallback((id: number) => handleAddUser(id), []),
     loginAccount: useCallback((id: number) => handleLoginAccount(id), []),
     addAccount: useCallback(
-      (email: string, password: string) => addAccount(email, password),
+      (name: string, email: string, password: string) =>
+        addAccount(name, email, password),
       []
     ),
     editAccount: useCallback(
-      (id: number, email: string, password: string) =>
-        editAccount(id, email, password),
+      (id: number, name: string, email: string, password: string) =>
+        editAccount(id, name, email, password),
       []
     ),
     deleteAccount: useCallback((id: number) => deleteAccount(id), []),

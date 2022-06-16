@@ -24,8 +24,13 @@ export interface DashboardContextType {
   dashboard: DashboardType;
   addUser: (id: number) => void;
   loginAccount: (id: number) => void;
-  addAccount: (email: string, password: string) => void;
-  editAccount: (id: number, email: string, password: string) => void;
+  addAccount: (name: string, email: string, password: string) => void;
+  editAccount: (
+    id: number,
+    name: string,
+    email: string,
+    password: string
+  ) => void;
   deleteAccount: (id: number) => void;
 }
 
@@ -37,6 +42,7 @@ export interface DashboardType {
 
 export interface AccountType {
   id: number;
+  name: string;
   email: string;
   password: string;
 }

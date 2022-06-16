@@ -1,11 +1,18 @@
-import { Box, Modal, Typography } from "@mui/material";
+import { Box, Button, Modal, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AddForm } from "../../components/AddFrom";
-import { EditForm } from "../../components/EditForm";
+import { DashboardForm } from "../../components/DashboardForm";
+import { Edit } from "../../components/Edit";
 import { Password } from "../../components/Password";
 import { useAuth } from "../../hooks/useAuth";
 import { useDashboard } from "../../hooks/useDashboard";
+import {
+  accountDashboard,
+  barDashboardStyle,
+  buttonDashboard,
+  containerDashboard,
+  emailDashboard,
+} from "../../style/dashboardStyle";
 
 export const DashboardPage = () => {
   const navigate = useNavigate();
@@ -15,13 +22,10 @@ export const DashboardPage = () => {
     useDashboard();
 
   const [openAdd, setOpenAdd] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false);
 
   const handleOpenAdd = () => setOpenAdd(true);
-  const handleOpenEdit = () => setOpenEdit(true);
 
   const handleCloseAdd = () => setOpenAdd(false);
-  const handleCloseEdit = () => setOpenEdit(false);
 
   const logout = () => {
     onLogout();
@@ -42,49 +46,61 @@ export const DashboardPage = () => {
 
   return (
     <Box>
-      {user.email}
-      <Box onClick={logout}>Logout</Box>
-      <Box>
-        <Typography onClick={handleOpenAdd}>Add Account</Typography>
+      <Box sx={barDashboardStyle}>
+        <Button variant="contained" onClick={logout} sx={{ margin: "10px" }}>
+          Logout
+        </Button>
+        <Typography sx={emailDashboard}>{user.email}</Typography>
       </Box>
-      <Modal
-        open={openAdd}
-        onClose={handleCloseAdd}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <AddForm handleCloseAdd={handleCloseAdd} />
-      </Modal>
-      <Box>
-        {dashboard.account.map((elem) => (
-          <Box key={elem.id} sx={{ display: "flex" }}>
-            <Box>
-              <Typography>Email: {elem.email}</Typography>
-              <Typography>
-                <Password password={elem.password} />
-              </Typography>
-            </Box>
-            <Box>
-              <Box sx={{ margin: "10px 0 0 50px" }} onClick={handleOpenEdit}>
-                Edit
+
+      <Box sx={containerDashboard}>
+        <Button
+          onClick={handleOpenAdd}
+          sx={{ margin: "0 0 0 70%" }}
+          variant="contained"
+        >
+          Add Account
+        </Button>
+        <Modal
+          open={openAdd}
+          onClose={handleCloseAdd}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <DashboardForm handleClose={handleCloseAdd} />
+        </Modal>
+        <Box sx={{ margin: "25px 0 0 0" }}>
+          {dashboard.account.map((elem) => (
+            <Box key={elem.id} sx={accountDashboard}>
+              <Box>
+                <Typography sx={{ fontSize: "18px" }}>
+                  Name: {elem.name}
+                </Typography>
+                <Typography sx={{ fontSize: "18px" }}>
+                  Email: {elem.email}
+                </Typography>
+                <Typography sx={{ fontSize: "18px" }}>
+                  <Password password={elem.password} />
+                </Typography>
               </Box>
-              <Box onClick={() => deleteAccount(elem.id)}>Delete</Box>
+              <Box>
+                <Edit
+                  id={elem.id}
+                  name={elem.name}
+                  email={elem.email}
+                  password={elem.password}
+                />
+                <Button
+                  variant="contained"
+                  onClick={() => deleteAccount(elem.id)}
+                  sx={buttonDashboard}
+                >
+                  Delete
+                </Button>
+              </Box>
             </Box>
-            <Modal
-              open={openEdit}
-              onClose={handleCloseEdit}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <EditForm
-                handleCloseEdit={handleCloseEdit}
-                id={elem.id}
-                email={elem.email}
-                password={elem.password}
-              />
-            </Modal>
-          </Box>
-        ))}
+          ))}
+        </Box>
       </Box>
     </Box>
   );
