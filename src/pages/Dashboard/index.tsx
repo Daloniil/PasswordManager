@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AddForm } from "../../components/AddFrom";
 import { EditForm } from "../../components/EditForm";
+import { Password } from "../../components/Password";
 import { useAuth } from "../../hooks/useAuth";
 import { useDashboard } from "../../hooks/useDashboard";
 
@@ -59,7 +60,9 @@ export const DashboardPage = () => {
           <Box key={elem.id} sx={{ display: "flex" }}>
             <Box>
               <Typography>Email: {elem.email}</Typography>
-              <Typography>Password: {elem.password}</Typography>
+              <Typography>
+                <Password password={elem.password} />
+              </Typography>
             </Box>
             <Box>
               <Box sx={{ margin: "10px 0 0 50px" }} onClick={handleOpenEdit}>
